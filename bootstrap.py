@@ -17,8 +17,8 @@ def gather_instances(api_id, api_secret):
     query = 'protocols:"9200/elasticsearch"'
     store = OfflineStore('censys', 'offline')
     filename = store._query_to_filename('search', query)
-    print('Storing results in {}'.format(filename))
-    with open('offline/data/{}'.format(filename), 'w') as output_file:
+    print(f'Storing results in {filename}')
+    with open(f'offline/data/{filename}', 'w') as output_file:
         results = api.search(query, max_records=1000)
         output_file.write(json.dumps(list(results), indent=4))
         return results
@@ -28,15 +28,17 @@ def gather_metadata(ip_address):
     client = Elasticsearch([ip_address])
     store = OfflineStore('elasticsearch', ip_address)
     filename = store._query_to_filename('indices', 'get')
-    print('Gathering Elasticsearch data for {} and storing in {}'.format(
-        ip_address, filename))
+    print(
+        f'Gathering Elasticsearch data for {ip_address} and storing in {filename}'
+    )
+
     indices = client.indices.get('*')
     for name, index in indices.items():
         try:
             index['_count'] = client.count(index=name)['count']
         except Exception as e:
             print(e)
-    with open('offline/data/{}'.format(filename), 'w') as output_file:
+    with open(f'offline/data/{filename}', 'w') as output_file:
         output_file.write(json.dumps(indices, indent=4))
 
 

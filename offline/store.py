@@ -18,11 +18,10 @@ class OfflineStore():
             endpoint {str} -- The endpoint being hit (e.g. "query")
             query {str} -- The query to execute
         """
-        slug = '{}-{}-{}-{}'.format(self.service, self.id, endpoint,
-                                    query).lower()
+        slug = f'{self.service}-{self.id}-{endpoint}-{query}'.lower()
         slug = re.sub('[^a-zA-Z0-9\-_\.]', '-', slug)
         slug = re.sub('[^a-zA-Z0-9]+$', '', slug)
-        slug = slug + '.json'
+        slug = f'{slug}.json'
         return slug
 
     def load_results(self, endpoint, query, page=1, default=[]):
@@ -41,6 +40,4 @@ class OfflineStore():
         filename = self._query_to_filename(endpoint, query, page=page)
         with open(self.directory + filename, 'r') as results_file:
             results = results_file.read()
-            if not results:
-                return default
-            return json.loads(results)
+            return json.loads(results) if results else default

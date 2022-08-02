@@ -16,8 +16,7 @@ def get_results(api_id, api_secret):
     """
     query = 'protocols:"9200/elasticsearch"'
     api = CensysIPv4(api_id=api_id, api_secret=api_secret)
-    for result in api.search(query):
-        yield result
+    yield from api.search(query)
 
 
 def process_result(ip_address):
@@ -27,7 +26,7 @@ def process_result(ip_address):
     Arguments:
         ip_address {str} -- The IP address of the Elasticsearch instance
     """
-    print('Processing instance at {}'.format(ip_address))
+    print(f'Processing instance at {ip_address}')
     client = OfflineElasticsearch([ip_address])
     indices = client.indices.get("*")
     # Each "record" is a dictionary for a given index on the Elasticsearch
